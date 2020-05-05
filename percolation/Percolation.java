@@ -8,9 +8,10 @@ import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
-    private WeightedQuickUnionUF weightedQuickUnion;
-    private int[] openSites;
-    private int n;
+    private final WeightedQuickUnionUF weightedQuickUnionTop;
+    private final WeightedQuickUnionUF weightedQuickUnionFull;
+    private final boolean[] openSites;
+    private final int n;
     private int openSitesCount;
 
     // creates n-by-n grid, with all sites initially blocked
@@ -20,14 +21,15 @@ public class Percolation {
         }
 
         this.n = n;
-        this.openSites = new int[n * n + 2];
-        this.weightedQuickUnion = new WeightedQuickUnionUF(this.openSites.length);
+        this.openSites = new boolean[n * n + 2];
+        this.weightedQuickUnionTop = new WeightedQuickUnionUF(this.openSites.length - 1);
+        this.weightedQuickUnionFull = new WeightedQuickUnionUF(this.openSites.length);
 
         // top hidden node
-        this.openSites[0] = 1;
+        this.openSites[0] = true;
 
         // bottom hidden node
-        this.openSites[this.openSites.length - 1] = 1;
+        this.openSites[this.openSites.length - 1] = true;
     }
 
     // opens the site (row, col) if it is not open already
@@ -36,14 +38,20 @@ public class Percolation {
         int newOpenIndex = this.getIndex(row, col);
 
         // open site
-        this.openSites[newOpenIndex] = 1;
+        if (this.openSites[newOpenIndex]) {
+            return;
+        }
+
+        this.openSites[newOpenIndex] = true;
         this.openSitesCount++;
 
         int siblingIndex;
         // left sibling
         if (col > 1) {
             siblingIndex = newOpenIndex - 1;
-            this.unionIfSiblingOpened(newOpenIndex, siblingIndex);
+            if (this.openSites[siblingIndex]) {
+                this.unionIfSiblingOpened(newOpenIndex, siblingIndex);
+            }
         }
 
         // right sibling
@@ -56,16 +64,10 @@ public class Percolation {
         if (row == 1) {
             this.unionIfSiblingOpened(newOpenIndex, 0);
         }
-
         // top sibling
-        if (row > 1) {
+        else {
             siblingIndex = this.getIndex(row - 1, col);
             this.unionIfSiblingOpened(newOpenIndex, siblingIndex);
-        }
-
-        // bottom hidden sibling
-        if (row == this.n) {
-            this.unionIfSiblingOpened(newOpenIndex, this.openSites.length - 1);
         }
 
         // bottom sibling
@@ -73,18 +75,21 @@ public class Percolation {
             siblingIndex = this.getIndex(row + 1, col);
             this.unionIfSiblingOpened(newOpenIndex, siblingIndex);
         }
+        else {
+            this.weightedQuickUnionFull.union(newOpenIndex, this.openSites.length - 1);
+        }
     }
 
     // is the site (row, col) open?
     public boolean isOpen(int row, int col) {
         this.checkBoundaries(row, col);
-        return this.openSites[this.getIndex(row, col)] == 1;
+        return this.openSites[this.getIndex(row, col)];
     }
 
     // is the site (row, col) full?
     public boolean isFull(int row, int col) {
         this.checkBoundaries(row, col);
-        return this.weightedQuickUnion.find(0) == this.weightedQuickUnion
+        return this.weightedQuickUnionTop.find(0) == this.weightedQuickUnionTop
                 .find(this.getIndex(row, col));
     }
 
@@ -95,7 +100,7 @@ public class Percolation {
 
     // does the system percolate?
     public boolean percolates() {
-        return this.weightedQuickUnion.find(0) == this.weightedQuickUnion
+        return this.weightedQuickUnionFull.find(0) == this.weightedQuickUnionFull
                 .find(this.openSites.length - 1);
     }
 
@@ -114,12 +119,13 @@ public class Percolation {
     }
 
     private int getIndex(int row, int col) {
-        return (row - 1) * this.n + col - 1;
+        return (row - 1) * this.n + col;
     }
 
     private void unionIfSiblingOpened(int newOpenIndex, int siblingIndex) {
-        if (this.openSites[siblingIndex] == 1) {
-            this.weightedQuickUnion.union(newOpenIndex, siblingIndex);
+        if (this.openSites[siblingIndex]) {
+            this.weightedQuickUnionTop.union(newOpenIndex, siblingIndex);
+            this.weightedQuickUnionFull.union(newOpenIndex, siblingIndex);
         }
     }
 
