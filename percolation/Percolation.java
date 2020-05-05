@@ -10,8 +10,12 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 public class Percolation {
     private final WeightedQuickUnionUF weightedQuickUnionTop;
     private final WeightedQuickUnionUF weightedQuickUnionFull;
-    private final boolean[] openSites;
+
+    // first bit - open or not
+    // second bit - full or not
+    private final byte[] sites;
     private final int n;
+    private boolean isPercolate = false;
     private int openSitesCount;
 
     // creates n-by-n grid, with all sites initially blocked
@@ -21,15 +25,15 @@ public class Percolation {
         }
 
         this.n = n;
-        this.openSites = new boolean[n * n + 2];
-        this.weightedQuickUnionTop = new WeightedQuickUnionUF(this.openSites.length - 1);
-        this.weightedQuickUnionFull = new WeightedQuickUnionUF(this.openSites.length);
+        this.sites = new byte[n * n + 2];
+        this.weightedQuickUnionTop = new WeightedQuickUnionUF(this.sites.length - 1);
+        this.weightedQuickUnionFull = new WeightedQuickUnionUF(this.sites.length);
 
         // top hidden node
-        this.openSites[0] = true;
+        this.sites[0] = 1;
 
         // bottom hidden node
-        this.openSites[this.openSites.length - 1] = true;
+        this.sites[this.sites.length - 1] = 1;
     }
 
     // opens the site (row, col) if it is not open already
@@ -38,11 +42,11 @@ public class Percolation {
         int newOpenIndex = this.getIndex(row, col);
 
         // open site
-        if (this.openSites[newOpenIndex]) {
+        if (this.isOpen(newOpenIndex)) {
             return;
         }
 
-        this.openSites[newOpenIndex] = true;
+        this.open(newOpenIndex);
         this.openSitesCount++;
 
         int siblingIndex;
@@ -74,21 +78,33 @@ public class Percolation {
             this.unionIfSiblingOpened(newOpenIndex, siblingIndex);
         }
         else {
-            this.weightedQuickUnionFull.union(newOpenIndex, this.openSites.length - 1);
+            this.weightedQuickUnionFull.union(newOpenIndex, this.sites.length - 1);
         }
     }
 
     // is the site (row, col) open?
     public boolean isOpen(int row, int col) {
         this.checkBoundaries(row, col);
-        return this.openSites[this.getIndex(row, col)];
+        return this.isOpen(this.getIndex(row, col));
     }
 
     // is the site (row, col) full?
     public boolean isFull(int row, int col) {
         this.checkBoundaries(row, col);
-        return this.weightedQuickUnionTop.find(0) == this.weightedQuickUnionTop
-                .find(this.getIndex(row, col));
+
+        int index = this.getIndex(row, col);
+        if (this.isFull(index)) {
+            return true;
+        }
+
+        boolean full = this.weightedQuickUnionTop.find(0) == this.weightedQuickUnionTop
+                .find(index);
+
+        if (full) {
+            this.full(index);
+        }
+
+        return full;
     }
 
     // returns the number of open sites
@@ -98,8 +114,13 @@ public class Percolation {
 
     // does the system percolate?
     public boolean percolates() {
-        return this.weightedQuickUnionFull.find(0) == this.weightedQuickUnionFull
-                .find(this.openSites.length - 1);
+        if (this.isPercolate) {
+            return true;
+        }
+
+        this.isPercolate = this.weightedQuickUnionFull.find(0) == this.weightedQuickUnionFull
+                .find(this.sites.length - 1);
+        return this.isPercolate;
     }
 
     // test client (optional)
@@ -121,9 +142,11 @@ public class Percolation {
     }
 
     private void unionIfSiblingOpened(int newOpenIndex, int siblingIndex) {
-        if (this.openSites[siblingIndex]) {
+        if (this.isOpen(siblingIndex)) {
             this.weightedQuickUnionTop.union(newOpenIndex, siblingIndex);
-            this.weightedQuickUnionFull.union(newOpenIndex, siblingIndex);
+            if (!this.isPercolate) {
+                this.weightedQuickUnionFull.union(newOpenIndex, siblingIndex);
+            }
         }
     }
 
@@ -131,5 +154,21 @@ public class Percolation {
         if (row <= 0 || col <= 0 || row > this.n || col > this.n) {
             throw new IllegalArgumentException();
         }
+    }
+
+    private boolean isOpen(int index) {
+        return (this.sites[index] & 1) == 1;
+    }
+
+    private void open(int index) {
+        this.sites[index] |= 1;
+    }
+
+    private boolean isFull(int index) {
+        return (this.sites[index] & 2) == 2;
+    }
+
+    private void full(int index) {
+        this.sites[index] |= 2;
     }
 }
