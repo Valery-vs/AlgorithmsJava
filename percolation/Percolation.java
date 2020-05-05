@@ -49,9 +49,7 @@ public class Percolation {
         // left sibling
         if (col > 1) {
             siblingIndex = newOpenIndex - 1;
-            if (this.openSites[siblingIndex]) {
-                this.unionIfSiblingOpened(newOpenIndex, siblingIndex);
-            }
+            this.unionIfSiblingOpened(newOpenIndex, siblingIndex);
         }
 
         // right sibling
