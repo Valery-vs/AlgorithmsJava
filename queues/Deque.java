@@ -9,9 +9,9 @@
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class Deque<T> implements Iterable<T> {
-    private Node<T> first;
-    private Node<T> last;
+public class Deque<Item> implements Iterable<Item> {
+    private Node<Item> first;
+    private Node<Item> last;
     private int size;
 
     // construct an empty deque
@@ -30,12 +30,12 @@ public class Deque<T> implements Iterable<T> {
     }
 
     // add the item to the front
-    public void addFirst(T item) {
+    public void addFirst(Item item) {
         if (item == null) {
             throw new IllegalArgumentException();
         }
 
-        Node<T> node = new Node<T>(item);
+        Node<Item> node = new Node<Item>(item);
         this.size++;
         if (this.isEmpty()) {
             this.first = node;
@@ -49,12 +49,12 @@ public class Deque<T> implements Iterable<T> {
     }
 
     // add the item to the back
-    public void addLast(T item) {
+    public void addLast(Item item) {
         if (item == null) {
             throw new IllegalArgumentException();
         }
 
-        Node<T> node = new Node<T>(item);
+        Node<Item> node = new Node<Item>(item);
         this.size++;
         if (this.isEmpty()) {
             this.first = node;
@@ -68,48 +68,60 @@ public class Deque<T> implements Iterable<T> {
     }
 
     // remove and return the item from the front
-    public T removeFirst() {
+    public Item removeFirst() {
         if (this.isEmpty()) {
             throw new NoSuchElementException();
         }
 
+        Item result = this.first.item;
         this.size--;
         this.first = this.first.next;
-        this.first.prev = null;
+        if (this.first != null) {
+            this.first.prev = null;
+        }
+        else {
+            this.last = null;
+        }
 
-        return this.first.item;
+        return result;
     }
 
     // remove and return the item from the back
-    public T removeLast() {
+    public Item removeLast() {
         if (this.isEmpty()) {
             throw new NoSuchElementException();
         }
 
+        Item result = this.last.item;
         this.size--;
         this.last = this.last.prev;
-        this.last.next = null;
+        if (this.last != null) {
+            this.last.next = null;
+        }
+        else {
+            this.first = null;
+        }
 
-        return this.last.item;
+        return result;
     }
 
     // return an iterator over items in order from front to back
-    public Iterator<T> iterator() {
+    public Iterator<Item> iterator() {
         return new ListIterator();
     }
 
-    private class Node<Item> {
-        private Item item;
-        private Node<Item> next;
-        private Node<Item> prev;
+    private class Node<NodeItem> {
+        private final NodeItem item;
+        private Node<NodeItem> next;
+        private Node<NodeItem> prev;
 
-        public Node(Item item) {
+        public Node(NodeItem item) {
             this.item = item;
         }
     }
 
-    private class ListIterator implements Iterator<T> {
-        private Node<T> current = first;
+    private class ListIterator implements Iterator<Item> {
+        private Node<Item> current = first;
 
         public boolean hasNext() {
             return current != null;
@@ -119,12 +131,12 @@ public class Deque<T> implements Iterable<T> {
             throw new UnsupportedOperationException();
         }
 
-        public T next() {
+        public Item next() {
             if (!this.hasNext()) {
                 throw new NoSuchElementException();
             }
 
-            T item = current.item;
+            Item item = current.item;
             current = current.next;
             return item;
         }
@@ -137,7 +149,15 @@ public class Deque<T> implements Iterable<T> {
         System.out
                 .printf("Created deque: isEmpty - %s, size - %d\n", deque.isEmpty(), deque.size());
 
+        deque.addFirst(1);
+        deque.removeLast();
+        deque.addFirst(3);
+        deque.addFirst(4);
+        deque.addFirst(5);
+        deque.removeLast();
+
         deque.addFirst(10);
+        deque.removeLast();
         deque.addFirst(9);
         deque.addLast(11);
         deque.addLast(12);
