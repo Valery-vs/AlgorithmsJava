@@ -56,9 +56,8 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             resize(this.items.length / 2, index);
         }
         else {
-            for (int i = index + 1; i < this.n; i++) {
-                this.items[i - 1] = this.items[i];
-            }
+            this.items[index] = this.items[this.n - 1];
+            this.items[this.n - 1] = null;
         }
 
         this.n--;
@@ -80,10 +79,17 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     }
 
     private void resize(int capacity, int exludeIndex) {
+        if (exludeIndex > -1) {
+            capacity--;
+        }
+
         Item[] copy = (Item[]) new Object[capacity];
         for (int i = 0; i < this.n; i++) {
-            if (i != exludeIndex) {
+            if (exludeIndex < 0 || i < exludeIndex) {
                 copy[i] = this.items[i];
+            }
+            else if (i > exludeIndex) {
+                copy[i - 1] = this.items[i];
             }
         }
 
@@ -96,9 +102,10 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     private class QueueIterator implements Iterator<Item> {
         private int current = 0;
+        private int[] itemsOrder;
 
         public QueueIterator() {
-            StdRandom.shuffle(items, 0, n);
+            this.itemsOrder = StdRandom.permutation(n);
         }
 
         public boolean hasNext() {
@@ -114,22 +121,45 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
                 throw new NoSuchElementException();
             }
 
-            return items[this.current++];
+            Item result = items[this.itemsOrder[this.current]];
+            this.current++;
+            return result;
         }
     }
 
     // unit testing (required)
     public static void main(String[] args) {
-        RandomizedQueue<Integer> randomizedQueue = new RandomizedQueue<Integer>();
+        RandomizedQueue<Integer> randomizedQueue1 = new RandomizedQueue<Integer>();
+        for (int i = 0; i < 12000; i++) {
+            randomizedQueue1.enqueue(1);
+            randomizedQueue1.enqueue(2);
+            randomizedQueue1.enqueue(3);
+            randomizedQueue1.enqueue(4);
+            randomizedQueue1.enqueue(5);
+            for (int q = 0; q < 5; q++) {
+                Integer deq = randomizedQueue1.dequeue();
+                if (deq == null) {
+                    System.out.println("null");
+                }
 
+                for (Integer j : randomizedQueue1) {
+                    if (j == null) {
+                        System.out.println("null");
+                    }
+                }
+            }
+        }
+
+        RandomizedQueue<Integer> randomizedQueue = new RandomizedQueue<Integer>();
         System.out
                 .printf("Created deque: isEmpty - %s, size - %d\n", randomizedQueue.isEmpty(),
                         randomizedQueue.size());
 
-        randomizedQueue.enqueue(12);
-        randomizedQueue.enqueue(11);
-        randomizedQueue.enqueue(10);
-        randomizedQueue.enqueue(9);
+        randomizedQueue.enqueue(1);
+        randomizedQueue.enqueue(2);
+        randomizedQueue.enqueue(3);
+        randomizedQueue.enqueue(4);
+        randomizedQueue.enqueue(5);
 
         System.out.printf("Added items: isEmpty - %s, size - %d\n", randomizedQueue.isEmpty(),
                           randomizedQueue.size());

@@ -12,6 +12,10 @@ public class Permutation {
     public static void main(String[] args) {
         int n = Integer.parseInt(args[0]);
 
+        if (n == 0) {
+            return;
+        }
+
         RandomizedQueue<String> queue = new RandomizedQueue<String>();
 
         while (!StdIn.isEmpty()) {
@@ -19,8 +23,13 @@ public class Permutation {
             queue.enqueue(line);
         }
 
-        for (int i = 0; i < n; i++) {
-            StdOut.println(queue.sample());
+        int i = 0;
+        for (String s : queue) {
+            StdOut.println(s);
+            i++;
+            if (i >= n) {
+                break;
+            }
         }
     }
 }
