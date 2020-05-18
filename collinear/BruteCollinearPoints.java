@@ -40,6 +40,10 @@ public class BruteCollinearPoints {
     private void findSegments(Point[] points) {
         Point[] pointsCopy = new Point[points.length];
         for (int i = 0; i < points.length; i++) {
+            if (points[i] == null) {
+                throw new IllegalArgumentException();
+            }
+
             pointsCopy[i] = points[i];
         }
         Arrays.sort(pointsCopy);

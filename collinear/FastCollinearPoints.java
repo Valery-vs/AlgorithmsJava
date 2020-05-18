@@ -36,14 +36,24 @@ public class FastCollinearPoints {
     }
 
     private void findSegments(Point[] points) {
-        Point[] pointsCopy = new Point[points.length];
+        Point[] pointsCopy1 = new Point[points.length];
         for (int i = 0; i < points.length; i++) {
-            pointsCopy[i] = points[i];
+            if (points[i] == null) {
+                throw new IllegalArgumentException();
+            }
+
+            pointsCopy1[i] = points[i];
         }
 
-        Arrays.sort(pointsCopy);
-        for (Point p : pointsCopy) {
-            Arrays.sort(points, p.slopeOrder());
+        Arrays.sort(pointsCopy1);
+
+        Point[] pointsCopy2 = new Point[points.length];
+        for (int i = 0; i < points.length; i++) {
+            pointsCopy2[i] = points[i];
+        }
+
+        for (Point p : pointsCopy1) {
+            Arrays.sort(pointsCopy2, p.slopeOrder());
 
             Point firstSegmentPoint = null;
             Point minSegmentPoint = null;
@@ -51,7 +61,7 @@ public class FastCollinearPoints {
             Point prevPoint = null;
             int numberOfPoints = 1;
             double currentSlope = 0;
-            for (Point x : points) {
+            for (Point x : pointsCopy2) {
                 if (firstSegmentPoint == null) {
                     firstSegmentPoint = x;
                     minSegmentPoint = x;
