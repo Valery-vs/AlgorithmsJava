@@ -50,10 +50,16 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.SimpleSorts">
+  <component name="RunManager" selected="Application.MergeSort">
     <configuration name="Deque" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="Deque" />
       <module name="Algorithms, Part I" />
+      <method v="2" />
+    </configuration>
+    <configuration name="MergeSort" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="MergeSort" />
+      <module name="Algorithms, Part I" />
+      <option name="PROGRAM_PARAMETERS" value="100000000" />
       <method v="2" />
     </configuration>
     <configuration name="Permutation" type="Application" factoryName="Application">
