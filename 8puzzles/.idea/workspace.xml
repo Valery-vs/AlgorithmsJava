@@ -50,6 +50,23 @@
       </list>
     </option>
   </component>
+  <component name="RunManager" selected="Application.Solver">
+    <configuration name="Board" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="Board" />
+      <module name="Algorithms, Part I" />
+      <option name="PROGRAM_PARAMETERS" value="examples\puzzle23.txt" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Solver" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="Solver" />
+      <module name="Algorithms, Part I" />
+      <option name="PROGRAM_PARAMETERS" value="examples\puzzle07.txt" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="Application" factoryName="Application">
+      <method v="2" />
+    </configuration>
+  </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
       <is-autoscroll-to-source value="true" />
@@ -58,5 +75,31 @@
       <are-packages-shown value="true" />
       <is-autoscroll-to-source value="true" />
     </todo-panel>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/Solver.java</url>
+          <line>75</line>
+          <option name="timeStamp" value="10" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/Solver.java</url>
+          <line>161</line>
+          <option name="timeStamp" value="23" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/Solver.java</url>
+          <line>66</line>
+          <option name="timeStamp" value="24" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+    <watches-manager>
+      <configuration name="Application">
+        <watch expression="boardMoves" language="JAVA" />
+      </configuration>
+    </watches-manager>
   </component>
 </project>
