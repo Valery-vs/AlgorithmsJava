@@ -145,7 +145,7 @@ public class Solver {
                 tiles[i][j] = in.readInt();
             }
         }
-        
+
         Board initial = new Board(tiles);
 
         // solve the puzzle
